@@ -8,6 +8,7 @@ import {
   MapPin,
   UserCircle,
   ShieldCheck,
+  HelpCircle,
   Zap,
 } from "lucide-react";
 import { useAuth } from "../AuthContext";
@@ -20,6 +21,7 @@ const navItems = [
   { to: "/favorites", label: "Favorites", icon: Heart },
   { to: "/locations", label: "Locations", icon: MapPin },
   { to: "/profile", label: "Profile", icon: UserCircle },
+  { to: "/help", label: "Help & Contact", icon: HelpCircle },
 ];
 
 export default function Sidebar() {

@@ -94,6 +94,15 @@ def init_db():
                 FOREIGN KEY(user_id) REFERENCES users(id),
                 FOREIGN KEY(provider_id) REFERENCES providers(id)
             );
+            CREATE TABLE IF NOT EXISTS contact_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                subject TEXT,
+                message TEXT NOT NULL,
+                status TEXT DEFAULT 'open',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
         conn.commit()

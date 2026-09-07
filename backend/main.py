@@ -45,6 +45,13 @@ class ProviderIn(BaseModel):
     description: str = ""
 
 
+class ContactIn(BaseModel):
+    name: str
+    email: str
+    subject: str = ""
+    message: str
+
+
 class ClassIn(BaseModel):
     provider_id: int
     name: str
@@ -247,6 +254,33 @@ def my_favorites(user=Depends(current_user)):
             (user["sub"],),
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+# ---------- contact / help ----------
+@app.post("/api/contact")
+def submit_contact(body: ContactIn):
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO contact_messages (name, email, subject, message) VALUES (?,?,?,?)",
+            (body.name, body.email, body.subject, body.message),
+        )
+        conn.commit()
+    return {"ok": True}
+
+
+@app.get("/api/admin/messages")
+def admin_list_messages(user=Depends(require_admin)):
+    with get_conn() as conn:
+        rows = conn.execute("SELECT * FROM contact_messages ORDER BY created_at DESC").fetchall()
+    return [dict(r) for r in rows]
+
+
+@app.post("/api/admin/messages/{message_id}/resolve")
+def admin_resolve_message(message_id: int, user=Depends(require_admin)):
+    with get_conn() as conn:
+        conn.execute("UPDATE contact_messages SET status='resolved' WHERE id=?", (message_id,))
+        conn.commit()
+    return {"ok": True}
 
 
 # ---------- admin ----------

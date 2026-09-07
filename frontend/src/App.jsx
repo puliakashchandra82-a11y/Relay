@@ -7,6 +7,7 @@ import MyBookings from "./pages/MyBookings";
 import Favorites from "./pages/Favorites";
 import Locations from "./pages/Locations";
 import Profile from "./pages/Profile";
+import Help from "./pages/Help";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -53,6 +54,7 @@ function AppRoutes() {
         }
       />
       <Route path="/locations" element={<Locations />} />
+      <Route path="/help" element={<Help />} />
       <Route
         path="/profile"
         element={

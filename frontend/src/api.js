@@ -42,4 +42,9 @@ export const api = {
     fetch(`${BASE}/admin/providers`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
   adminCreateClass: (data) =>
     fetch(`${BASE}/admin/classes`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+  submitContact: (data) =>
+    fetch(`${BASE}/contact`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+  adminMessages: () => fetch(`${BASE}/admin/messages`, { headers: headers() }).then(handle),
+  adminResolveMessage: (id) =>
+    fetch(`${BASE}/admin/messages/${id}/resolve`, { method: "POST", headers: headers() }).then(handle),
 };
