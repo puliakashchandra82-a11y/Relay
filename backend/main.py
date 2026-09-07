@@ -1,12 +1,13 @@
 import bcrypt
 import jwt
 from datetime import datetime, timedelta, timezone
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
 from database import init_db, get_conn
+from email_utils import send_booking_confirmation
 
 SECRET = "relay-dev-secret-change-me"
 ALGO = "HS256"
@@ -179,7 +180,7 @@ def get_provider(provider_id: int):
 
 # ---------- bookings ----------
 @app.post("/api/bookings")
-def create_booking(body: BookingIn, user=Depends(current_user)):
+def create_booking(body: BookingIn, background_tasks: BackgroundTasks, user=Depends(current_user)):
     with get_conn() as conn:
         cls = conn.execute("SELECT * FROM classes WHERE id=?", (body.class_id,)).fetchone()
         if not cls:
@@ -194,6 +195,29 @@ def create_booking(body: BookingIn, user=Depends(current_user)):
             (user["sub"], body.class_id),
         )
         conn.commit()
+
+        row = conn.execute(
+            """SELECT u.email, u.full_name, c.name as class_name, c.date, c.time, c.price,
+                      p.name as provider_name, l.name as location_name
+               FROM users u, classes c
+               LEFT JOIN providers p ON c.provider_id = p.id
+               LEFT JOIN locations l ON p.location_id = l.id
+               WHERE u.id = ? AND c.id = ?""",
+            (user["sub"], body.class_id),
+        ).fetchone()
+
+    if row:
+        background_tasks.add_task(
+            send_booking_confirmation,
+            row["email"],
+            row["full_name"],
+            row["class_name"],
+            row["provider_name"],
+            row["date"],
+            row["time"],
+            row["price"],
+            row["location_name"],
+        )
     return {"ok": True}
 
 
