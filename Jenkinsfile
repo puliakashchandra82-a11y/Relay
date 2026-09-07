@@ -65,7 +65,7 @@ pipeline {
         stage('Deploy frontend GitHub Pages') {
             when { expression { params.TARGET_SITE == 'GitHub Pages' } }
             steps {
-                withCredentials([usernamePassword(credentialsId 'github-pat', usernameVariable 'GIT_USER', passwordVariable 'GIT_TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId 'github-credentials', usernameVariable 'GIT_USER', passwordVariable 'GIT_TOKEN')]) {
                     dir('frontenddist') {
                         sh '''
                             git init -q
