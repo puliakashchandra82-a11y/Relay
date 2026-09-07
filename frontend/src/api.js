@@ -1,4 +1,4 @@
-const BASE = "http://localhost:8000/api";
+const BASE = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api`;
 
 function headers() {
   const token = localStorage.getItem("relay_token");
@@ -18,9 +18,17 @@ async function handle(res) {
 
 export const api = {
   register: (data) =>
-    fetch(`${BASE}/auth/register`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+    fetch(`${BASE}/auth/register`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(data),
+    }).then(handle),
   login: (data) =>
-    fetch(`${BASE}/auth/login`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+    fetch(`${BASE}/auth/login`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(data),
+    }).then(handle),
   me: () => fetch(`${BASE}/me`, { headers: headers() }).then(handle),
   types: () => fetch(`${BASE}/types`).then(handle),
   locations: () => fetch(`${BASE}/locations`).then(handle),
@@ -30,21 +38,52 @@ export const api = {
   },
   provider: (id) => fetch(`${BASE}/providers/${id}`).then(handle),
   book: (class_id) =>
-    fetch(`${BASE}/bookings`, { method: "POST", headers: headers(), body: JSON.stringify({ class_id }) }).then(handle),
-  myBookings: () => fetch(`${BASE}/bookings/me`, { headers: headers() }).then(handle),
-  cancelBooking: (id) => fetch(`${BASE}/bookings/${id}`, { method: "DELETE", headers: headers() }).then(handle),
+    fetch(`${BASE}/bookings`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify({ class_id }),
+    }).then(handle),
+  myBookings: () =>
+    fetch(`${BASE}/bookings/me`, { headers: headers() }).then(handle),
+  cancelBooking: (id) =>
+    fetch(`${BASE}/bookings/${id}`, {
+      method: "DELETE",
+      headers: headers(),
+    }).then(handle),
   toggleFavorite: (providerId) =>
-    fetch(`${BASE}/favorites/${providerId}`, { method: "POST", headers: headers() }).then(handle),
-  myFavorites: () => fetch(`${BASE}/favorites/me`, { headers: headers() }).then(handle),
-  adminStats: () => fetch(`${BASE}/admin/stats`, { headers: headers() }).then(handle),
-  adminBookings: () => fetch(`${BASE}/admin/bookings`, { headers: headers() }).then(handle),
+    fetch(`${BASE}/favorites/${providerId}`, {
+      method: "POST",
+      headers: headers(),
+    }).then(handle),
+  myFavorites: () =>
+    fetch(`${BASE}/favorites/me`, { headers: headers() }).then(handle),
+  adminStats: () =>
+    fetch(`${BASE}/admin/stats`, { headers: headers() }).then(handle),
+  adminBookings: () =>
+    fetch(`${BASE}/admin/bookings`, { headers: headers() }).then(handle),
   adminCreateProvider: (data) =>
-    fetch(`${BASE}/admin/providers`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+    fetch(`${BASE}/admin/providers`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(data),
+    }).then(handle),
   adminCreateClass: (data) =>
-    fetch(`${BASE}/admin/classes`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
+    fetch(`${BASE}/admin/classes`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(data),
+    }).then(handle),
   submitContact: (data) =>
-    fetch(`${BASE}/contact`, { method: "POST", headers: headers(), body: JSON.stringify(data) }).then(handle),
-  adminMessages: () => fetch(`${BASE}/admin/messages`, { headers: headers() }).then(handle),
+    fetch(`${BASE}/contact`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(data),
+    }).then(handle),
+  adminMessages: () =>
+    fetch(`${BASE}/admin/messages`, { headers: headers() }).then(handle),
   adminResolveMessage: (id) =>
-    fetch(`${BASE}/admin/messages/${id}/resolve`, { method: "POST", headers: headers() }).then(handle),
+    fetch(`${BASE}/admin/messages/${id}/resolve`, {
+      method: "POST",
+      headers: headers(),
+    }).then(handle),
 };
